@@ -85,30 +85,36 @@ class RenderSystem {
     }
     
     /**
-     * Cria a bola (CORRIGIDO PARA ARCADE PHYSICS)
+     * Cria a bola (CORRIGIDO)
      */
     createBall() {
         const { WIDTH, HEIGHT } = GameConfig.FIELD;
         const radius = GameConfig.PHYSICS.BALL.RADIUS;
 
-        // Cria visual da bola
-        const ball = this.scene.add.circle(
+        // Criar textura dinâmica da bola se não existir
+        if (!this.scene.textures.exists('ballTexture')) {
+            const graphics = this.scene.add.graphics();
+            graphics.fillStyle(0xffffff, 1);
+            graphics.fillCircle(radius, radius, radius);
+            graphics.generateTexture('ballTexture', radius * 2, radius * 2);
+            graphics.destroy();
+        }
+
+        // Criar bola com física Arcade
+        const ball = this.scene.physics.add.image(
             WIDTH / 2,
             HEIGHT / 2,
-            radius,
-            0xffffff
+            'ballTexture'
         );
 
-        // Adiciona física Arcade
-        this.scene.physics.add.existing(ball);
+        // Corpo circular
+        ball.setCircle(radius);
 
-        // Configura corpo físico
-        ball.body.setCircle(radius);
-        ball.body.setCollideWorldBounds(true);
-        ball.body.setBounce(GameConfig.PHYSICS.BALL.BOUNCE);
-        ball.body.setDamping(true);
-        ball.body.setDrag(GameConfig.PHYSICS.BALL.DRAG);
-        ball.body.setMaxVelocity(GameConfig.PHYSICS.BALL.MAX_SPEED);
+        ball.setCollideWorldBounds(true);
+        ball.setBounce(GameConfig.PHYSICS.BALL.BOUNCE);
+        ball.setDamping(true);
+        ball.setDrag(GameConfig.PHYSICS.BALL.DRAG);
+        ball.setMaxVelocity(GameConfig.PHYSICS.BALL.MAX_SPEED);
 
         ball.lastTouchedBy = null;
 
@@ -146,7 +152,7 @@ class RenderSystem {
                 fontSize: '16px', 
                 fill: '#fff', 
                 backgroundColor: '#000000aa', 
-                padding: { x: 10, y: 10 } 
+                padding: { x: 10, y: 5 }
             }
         ).setDepth(100);
         
@@ -169,9 +175,7 @@ class RenderSystem {
         if (ui.timeText) {
             const minutes = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
-            ui.timeText.setText(
-                `${minutes}:${secs.toString().padStart(2, '0')}`
-            );
+            ui.timeText.setText(`${minutes}:${secs.toString().padStart(2, '0')}`);
         }
     }
 }
