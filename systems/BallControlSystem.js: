@@ -1,15 +1,22 @@
 /**
  * BallControlSystem.js
- * 
- * Sistema para controle de drible, separado para manter modularidade.
  */
-
 class BallControlSystem {
+    constructor() {}
+    
     updateDribble(player, ball) {
-        const speed = player.currentSpeed;
-        const offset = 10 + speed * 0.05; // Loose em alta vel
-        const angle = player.targetDirection;
-        ball.setPosition(player.x + Math.cos(angle) * offset, player.y + Math.sin(angle) * offset);
-        if (Math.random() < 0.01 * (speed / player.stats.speed)) ball.setVelocity(0, 0); // Chance de perda de controle
+        // MantÃ©m a bola prÃ³xima ao jogador durante drible
+        const angle = player.targetDirection || 0;
+        const offset = 20;
+        
+        ball.setPosition(
+            player.x + Math.cos(angle) * offset,
+            player.y + Math.sin(angle) * offset
+        );
+    }
+    
+    checkBallControl(player, ball) {
+        const dist = MathHelpers.distance(player.x, player.y, ball.x, ball.y);
+        return dist < 30;
     }
 }
