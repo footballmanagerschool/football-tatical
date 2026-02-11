@@ -10,14 +10,87 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-        // Fundo gradient (ajuste conforme seu estilo)
-        this.add.rectangle(600, 400, 1200, 800, 0x1a5f2e);
-        this.add.text(600, 200, 'Tactical Football Manager', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+        // Fundo gradient
+        this.add.rectangle(
+            GameConfig.FIELD.WIDTH / 2, 
+            GameConfig.FIELD.HEIGHT / 2, 
+            GameConfig.FIELD.WIDTH, 
+            GameConfig.FIELD.HEIGHT, 
+            0x1a5f2e
+        );
         
-        const startBtn = this.add.text(600, 400, 'Start Game', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5).setInteractive();
-        startBtn.on('pointerdown', () => this.scene.start('GameScene'));
+        // Título do jogo
+        this.add.text(
+            GameConfig.FIELD.WIDTH / 2, 
+            200, 
+            'Tactical Football Manager', 
+            { 
+                fontSize: '48px', 
+                fill: '#fff',
+                fontFamily: 'Arial Black'
+            }
+        ).setOrigin(0.5);
         
-        const configBtn = this.add.text(600, 450, 'Settings', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5).setInteractive();
-        configBtn.on('pointerdown', () => this.scene.start('SettingsScene'));
+        // Botão Start Game
+        const startBtn = this.add.text(
+            GameConfig.FIELD.WIDTH / 2, 
+            400, 
+            'Start Game', 
+            { 
+                fontSize: '32px', 
+                fill: '#fff',
+                backgroundColor: '#00000088',
+                padding: { x: 20, y: 10 }
+            }
+        ).setOrigin(0.5).setInteractive();
+        
+        startBtn.on('pointerover', () => {
+            startBtn.setStyle({ fill: '#ffff00' });
+        });
+        
+        startBtn.on('pointerout', () => {
+            startBtn.setStyle({ fill: '#fff' });
+        });
+        
+        startBtn.on('pointerdown', () => {
+            this.scene.start('GameScene');
+        });
+        
+        // Botão Settings
+        const configBtn = this.add.text(
+            GameConfig.FIELD.WIDTH / 2, 
+            480, 
+            'Settings', 
+            { 
+                fontSize: '32px', 
+                fill: '#fff',
+                backgroundColor: '#00000088',
+                padding: { x: 20, y: 10 }
+            }
+        ).setOrigin(0.5).setInteractive();
+        
+        configBtn.on('pointerover', () => {
+            configBtn.setStyle({ fill: '#ffff00' });
+        });
+        
+        configBtn.on('pointerout', () => {
+            configBtn.setStyle({ fill: '#fff' });
+        });
+        
+        configBtn.on('pointerdown', () => {
+            this.scene.start('SettingsScene');
+        });
+        
+        // Instruções
+        this.add.text(
+            GameConfig.FIELD.WIDTH / 2, 
+            600, 
+            'Use mouse para selecionar jogador\nSetas para mover, Espaço para chutar', 
+            { 
+                fontSize: '16px', 
+                fill: '#ffffff88',
+                align: 'center'
+            }
+        ).setOrigin(0.5);
     }
 }
