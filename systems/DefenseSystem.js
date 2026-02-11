@@ -1,3 +1,4 @@
+/**
  * DefenseSystem.js
  */
 class DefenseSystem {
