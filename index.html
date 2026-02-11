@@ -16,6 +16,10 @@
     <script src="systems/MovementSystem.js"></script>
     <script src="systems/DecisionSystem.js"></script>
     <script src="systems/RenderSystem.js"></script>
+    <script src="systems/BallControlSystem.js"></script>
+    <script src="systems/ShootingSystem.js"></script>
+    <script src="scenes/MainMenuScene.js"></script>
+    <script src="scenes/SettingsScene.js"></script>
     <script src="scenes/GameScene.js"></script>
     
     <style>
@@ -63,7 +67,7 @@
                     debug: false // Set to true for debugging
                 }
             },
-            scene: GameScene
+            scene: [MainMenuScene, SettingsScene, GameScene]
         };
 
         const game = new Phaser.Game(config);
