@@ -45,101 +45,36 @@
             overflow: hidden;
             border: 2px solid rgba(255,255,255,0.1);
         }
-        
-        #error-display {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            display: none;
-            z-index: 9999;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        
-        #error-display.show {
-            display: block;
-        }
     </style>
 </head>
 <body>
     <div id="game-container"></div>
-    <div id="error-display"></div>
     
     <script>
-        // Error handler
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            const errorDiv = document.getElementById('error-display');
-            errorDiv.innerHTML = `
-                <strong>ERRO DETECTADO:</strong><br>
-                <strong>Mensagem:</strong> ${msg}<br>
-                <strong>Arquivo:</strong> ${url}<br>
-                <strong>Linha:</strong> ${lineNo}<br>
-                <strong>Coluna:</strong> ${columnNo}<br>
-                <strong>Stack:</strong><br><pre>${error ? error.stack : 'N/A'}</pre>
-            `;
-            errorDiv.classList.add('show');
-            console.error('ERRO:', msg, url, lineNo, columnNo, error);
-            return false;
+        // ============================================
+        // GAME INITIALIZATION
+        // ============================================
+        const config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 800, // Ajustado para 800 conforme GameConfig
+            parent: 'game-container',
+            backgroundColor: '#1a5f2e',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 },
+                    debug: false // Set to true for debugging
+                }
+            },
+            scene: [MainMenuScene, SettingsScene, GameScene]
         };
         
-        // Log carregamento de scripts
-        console.log('📦 Verificando dependências...');
-        console.log('✅ Phaser:', typeof Phaser !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ GameConfig:', typeof GameConfig !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ MathHelpers:', typeof MathHelpers !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ PlayerStates:', typeof PlayerStates !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ Player:', typeof Player !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ ZoneSystem:', typeof ZoneSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ DefenseSystem:', typeof DefenseSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ MovementSystem:', typeof MovementSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ DecisionSystem:', typeof DecisionSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ RenderSystem:', typeof RenderSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ BallControlSystem:', typeof BallControlSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ ShootingSystem:', typeof ShootingSystem !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ MainMenuScene:', typeof MainMenuScene !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ SettingsScene:', typeof SettingsScene !== 'undefined' ? 'OK' : 'ERRO');
-        console.log('✅ GameScene:', typeof GameScene !== 'undefined' ? 'OK' : 'ERRO');
+        const game = new Phaser.Game(config);
         
-        try {
-            // ============================================
-            // GAME INITIALIZATION
-            // ============================================
-            const config = {
-                type: Phaser.AUTO,
-                width: 1200,
-                height: 800,
-                parent: 'game-container',
-                backgroundColor: '#1a5f2e',
-                physics: {
-                    default: 'arcade',
-                    arcade: {
-                        gravity: { y: 0 },
-                        debug: true // ATIVADO PARA DEBUG
-                    }
-                },
-                scene: [MainMenuScene, SettingsScene, GameScene]
-            };
-            
-            const game = new Phaser.Game(config);
-            
-            console.log('🎮 Tactical Football Manager - Professional Edition');
-            console.log('✅ Inicializado com sucesso!');
-            console.log('📐 Resolução:', config.width, 'x', config.height);
-        } catch(e) {
-            console.error('❌ Erro ao inicializar o jogo:', e);
-            const errorDiv = document.getElementById('error-display');
-            errorDiv.innerHTML = `
-                <strong>ERRO NA INICIALIZAÇÃO:</strong><br>
-                ${e.message}<br>
-                <pre>${e.stack}</pre>
-            `;
-            errorDiv.classList.add('show');
-        }
+        console.log('🎮 Tactical Football Manager - Professional Edition');
+        console.log('✅ Inicializado com sucesso!');
+        console.log('📐 Resolução:', config.width, 'x', config.height);
     </script>
 </body>
 </html>
