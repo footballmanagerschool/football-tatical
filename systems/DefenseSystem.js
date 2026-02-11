@@ -1,13 +1,9 @@
-/**
- * DefenseSystem.js
- */
-class DefenseSystem {
+export default class DefenseSystem {
     constructor(scene) {
         this.scene = scene;
     }
     
     calculateDefensivePosition(player, ball, opponentWithBall) {
-        // Posiciona-se entre o oponente e o gol
         const goalX = player.team === 1 ? 0 : GameConfig.FIELD.WIDTH;
         const goalY = GameConfig.FIELD.HEIGHT / 2;
         
