@@ -36,8 +36,7 @@ class RenderSystem {
         const centerCircle = this.scene.add.circle(
             WIDTH / 2, 
             HEIGHT / 2, 
-            80, 
-            null
+            80
         );
         centerCircle.setStrokeStyle(LINE_WIDTH, LINE_COLOR);
         
@@ -46,8 +45,7 @@ class RenderSystem {
             0, 
             HEIGHT / 2, 
             150, 
-            300, 
-            null
+            300
         ).setOrigin(0, 0.5).setStrokeStyle(LINE_WIDTH, LINE_COLOR);
         
         // Área de gol direita
@@ -55,8 +53,7 @@ class RenderSystem {
             WIDTH, 
             HEIGHT / 2, 
             150, 
-            300, 
-            null
+            300
         ).setOrigin(1, 0.5).setStrokeStyle(LINE_WIDTH, LINE_COLOR);
     }
     
@@ -88,25 +85,33 @@ class RenderSystem {
     }
     
     /**
-     * Cria a bola
+     * Cria a bola (CORRIGIDO PARA ARCADE PHYSICS)
      */
     createBall() {
         const { WIDTH, HEIGHT } = GameConfig.FIELD;
-        const ball = this.scene.physics.add.circle(
-            WIDTH / 2, 
-            HEIGHT / 2, 
-            GameConfig.PHYSICS.BALL.RADIUS, 
+        const radius = GameConfig.PHYSICS.BALL.RADIUS;
+
+        // Cria visual da bola
+        const ball = this.scene.add.circle(
+            WIDTH / 2,
+            HEIGHT / 2,
+            radius,
             0xffffff
         );
-        
-        ball.setCollideWorldBounds(true);
-        ball.setBounce(GameConfig.PHYSICS.BALL.BOUNCE);
-        ball.setDamping(true);
-        ball.setDrag(GameConfig.PHYSICS.BALL.DRAG);
-        ball.setMaxVelocity(GameConfig.PHYSICS.BALL.MAX_SPEED);
-        
+
+        // Adiciona física Arcade
+        this.scene.physics.add.existing(ball);
+
+        // Configura corpo físico
+        ball.body.setCircle(radius);
+        ball.body.setCollideWorldBounds(true);
+        ball.body.setBounce(GameConfig.PHYSICS.BALL.BOUNCE);
+        ball.body.setDamping(true);
+        ball.body.setDrag(GameConfig.PHYSICS.BALL.DRAG);
+        ball.body.setMaxVelocity(GameConfig.PHYSICS.BALL.MAX_SPEED);
+
         ball.lastTouchedBy = null;
-        
+
         return ball;
     }
     
@@ -132,12 +137,17 @@ class RenderSystem {
             { fontSize: '24px', fill: '#fff' }
         ).setOrigin(0.5).setDepth(100);
         
-        // Controles (inicialmente oculto)
+        // Controles
         ui.controlsText = this.scene.add.text(
             20, 
             GameConfig.FIELD.HEIGHT - 100, 
             '', 
-            { fontSize: '16px', fill: '#fff', backgroundColor: '#000000aa', padding: 10 }
+            { 
+                fontSize: '16px', 
+                fill: '#fff', 
+                backgroundColor: '#000000aa', 
+                padding: { x: 10, y: 10 } 
+            }
         ).setDepth(100);
         
         return ui;
@@ -159,7 +169,9 @@ class RenderSystem {
         if (ui.timeText) {
             const minutes = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
-            ui.timeText.setText(`${minutes}:${secs.toString().padStart(2, '0')}`);
+            ui.timeText.setText(
+                `${minutes}:${secs.toString().padStart(2, '0')}`
+            );
         }
     }
 }
