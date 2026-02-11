@@ -1,71 +1,54 @@
 /**
  * MovementSystem.js
  * 
- * Handles all player movement, physics updates, and field bounds.
- * Separates movement logic from decision-making.
- * 
- * ARCHITECTURAL DECISION:
- * - Pure physics calculations, no AI logic here
- * - Systems call this to execute movement
- * - Handles collisions, bounds, stamina-based movement
+ * Sistema que gerencia movimento de jogadores
  */
 
 class MovementSystem {
     constructor(scene) {
         this.scene = scene;
-        this.fieldBounds = GameConfig.FIELD.BOUNDS;
     }
     
-    update(players, delta) {
-        players.forEach(player => {
-            this.updatePlayerPhysics(player, delta / 1000); // dt in seconds
-            this.enforceFieldBounds(player);
-            this.updateStamina(player, delta / 1000);
-        });
+    /**
+     * Move jogador para posição alvo
+     */
+    movePlayerTo(player, targetX, targetY, sprint = false) {
+        player.moveTo(targetX, targetY, sprint);
     }
     
-    updatePlayerPhysics(player, dt) {
-        const abilityMultiplier = this.getAbilitySpeedMultiplier(player);
-        const staminaMultiplier = this.getStaminaSpeedMultiplier(player);
-        const effectiveMaxSpeed = player.stats.speed * abilityMultiplier * staminaMultiplier;
-
-        // Simula inércia: Damping exponencial
-        const drag = GameConfig.PHYSICS.PLAYER.DRAG + (player.isSprinting ? 0.02 : 0); // Mais drag em sprint
-        player.sprite.body.velocity.x *= Math.pow(drag, dt * 60); // Aprox e^(-k*dt)
-        player.sprite.body.velocity.y *= Math.pow(drag, dt * 60);
-
-        // Momentum: Atualiza direção atual com lerp para target
-        if (player.targetDirection !== undefined) {
-          const currentAngle = Math.atan2(player.sprite.body.velocity.y, player.sprite.body.velocity.x);
-          const targetAngle = player.targetDirection;
-          const deltaAngle = Math.atan2(Math.sin(targetAngle - currentAngle), Math.cos(targetAngle - currentAngle));
-          const turnRate = 5 * (1 - (player.currentSpeed / effectiveMaxSpeed) ** 0.5); // Slow turn at high speed
-          const newAngle = currentAngle + deltaAngle * Math.min(1, turnRate * dt);
-
-          // Aceleração progressiva (quadratic ease-in)
-          const accelFactor = player.isAccelerating ? Math.pow(player.accelTime / 1, 2) : 0; // 1s to max
-          player.accelTime = Math.min(1, player.accelTime + dt);
-          const speed = effectiveMaxSpeed * accelFactor * (player.isSprinting ? 1.5 : 1);
-
-          player.sprite.body.velocity.x = Math.cos(newAngle) * speed;
-          player.sprite.body.velocity.y = Math.sin(newAngle) * speed;
-          player.currentSpeed = Phaser.Math.Clamp(speed, 0, effectiveMaxSpeed);
+    /**
+     * Retorna jogador à sua posição base
+     */
+    returnToBasePosition(player) {
+        const dist = MathHelpers.distance(
+            player.x, player.y, 
+            player.basePosition.x, player.basePosition.y
+        );
+        
+        if (dist > 50) {
+            player.moveTo(player.basePosition.x, player.basePosition.y, false);
         } else {
-          // Desaceleração suave se no input
-          player.accelTime = 0;
-          if (player.currentSpeed < 5) player.sprite.setVelocity(0, 0);
+            player.stop();
         }
-
-        // Update run animation based on accel, not just vel
-        player.updateRunAnimation(player.accelTime > 0 ? player.currentSpeed : 0);
-      }
+    }
     
-    // ... (o restante do código original de MovementSystem.js continua aqui, incluindo getAbilitySpeedMultiplier, getStaminaSpeedMultiplier, enforceFieldBounds, updateStamina, moveToward, etc.)
+    /**
+     * Intercepta bola
+     */
+    interceptBall(player, ball) {
+        // Predição da posição da bola
+        const predictTime = 0.5; // 500ms à frente
+        const predictedX = ball.x + ball.body.velocity.x * predictTime;
+        const predictedY = ball.y + ball.body.velocity.y * predictTime;
+        
+        player.moveTo(predictedX, predictedY, true);
+    }
     
-    accelerateToward(player, targetAngle, isSprinting = false, isAccelerating = true) {
-        player.targetDirection = targetAngle;
-        player.isSprinting = isSprinting;
-        player.isAccelerating = isAccelerating;
-        player.accelTime = player.accelTime || 0; // Buffer
+    /**
+     * Verifica se jogador pode alcançar a bola
+     */
+    canReachBall(player, ball) {
+        const dist = MathHelpers.distance(player.x, player.y, ball.x, ball.y);
+        return dist < 50;
     }
 }
