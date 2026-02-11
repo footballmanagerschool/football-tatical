@@ -1,7 +1,7 @@
 /**
  * RenderSystem.js
  * 
- * Sistema responsável por renderizar elementos visuais do jogo
+ * Sistema responsável or renderizar elementos visuais do jogo
  */
 
 class RenderSystem {
