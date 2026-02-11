@@ -1,4 +1,7 @@
-export default class DefenseSystem {
+/**
+ * DefenseSystem.js
+ */
+class DefenseSystem {
     constructor(scene) {
         this.scene = scene;
     }
@@ -16,3 +19,4 @@ export default class DefenseSystem {
         return player.basePosition;
     }
 }
+
